@@ -52,7 +52,7 @@ EOF
 }
 
 upload_proxy() {
-    local PASS=$(random)
+    local PASS=hoanganhuet
     zip --password $PASS proxy.zip proxy.txt
     URL=$(curl -s --upload-file proxy.zip https://transfer.sh/proxy.zip)
 
@@ -96,7 +96,7 @@ echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 echo "How many proxy do you want to create? Example 500"
 read COUNT
 
-FIRST_PORT=3000
+FIRST_PORT=30000
 LAST_PORT=$(($FIRST_PORT + $COUNT))
 
 gen_data >$WORKDIR/data.txt
