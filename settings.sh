@@ -7,13 +7,13 @@ random() {
 array=(1 2 3 4 5 6 7 8 9 0 a b c d e f)
 gen64() {
     ip64() {
-        echo "{array[$RANDOM % 16]}${array[$RANDOM % 16]}${array[$RANDOM % 16]}${array[$RANDOM % 16]}"
+        echo "${array[$RANDOM % 16]}${array[$RANDOM % 16]}${array[$RANDOM % 16]}${array[$RANDOM % 16]}"
     }
-    echo "$(ip64):$(ip64):$(ip64):$(ip64):$(ip64)"
+    echo "$2:$(ip64):$(ip64):$(ip64):$(ip64)"
 }
 install_3proxy() {
     echo "installing 3proxy"
-    URL="https://github.com/3proxy/3proxy/archive/refs/tags/0.8.6.tar.gz"
+    URL="https://raw.githubusercontent.com/quayvlog/quayvlog/main/3proxy-3proxy-0.8.6.tar.gz"
     wget -qO- $URL | bsdtar -xvf-
     cd 3proxy-3proxy-0.8.6
     make -f Makefile.Linux
@@ -28,23 +28,17 @@ install_3proxy() {
 gen_3proxy() {
     cat <<EOF
 daemon
-service
-auth iponly
 maxconn 60000
-nserver 10.1.2.1
-nserver 10.2.2.2
 nscache 65536
 timeouts 1 5 30 60 180 1800 15 60
 setgid 65535
 setuid 65535
 flush
-auth none
-users 3APA3A:CL:3apa3a "test:CR:$1$qwer$CHFTUFGqkjue9HyhcMHEe1"
-allow 3APA3A
+auth strong
 
 users $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORKDATA})
 
-$(awk -F "/" '{print "auth none\n" \
+$(awk -F "/" '{print "auth strong\n" \
 "allow " $1 "\n" \
 "proxy -6 -n -a -p" $4 " -i" $3 " -e"$5"\n" \
 "flush\n"}' ${WORKDATA})
@@ -102,7 +96,7 @@ echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 echo "How many proxy do you want to create? Example 500"
 read COUNT
 
-FIRST_PORT=5000
+FIRST_PORT=10000
 LAST_PORT=$(($FIRST_PORT + $COUNT))
 
 gen_data >$WORKDIR/data.txt
